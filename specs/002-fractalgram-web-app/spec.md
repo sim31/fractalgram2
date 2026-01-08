@@ -4,7 +4,17 @@
  **Created**: 2026-01-07  
  **Status**: Draft  
  **Input**: User description: "Build a web app that implements fractalgram (rooms for Respect Game consensus-building, with credits, polls per level 6→1, chat, host-controlled steps, room lifetime + locked mode, optional delegate election), using a single identity app for authentication: https://eden.frapps.xyz/."
+
+ ## Clarifications
+
+ ### Session 2026-01-08
  
+ - Q: Room access vs authentication → A: Authentication required for live rooms; locked rooms viewable without login (read-only).
+ - Q: Results delivery timing/behavior → A: Submission is allowed even when the room is locked, but in v1 the “Submit results” button is a no-op placeholder and the app does not record/display delivery success/failure.
+ - Q: Host-managed participants and reserved slots → A: Host can pre-add reserved participants with a name and optional EVM address; reserved participants appear in polls even if unclaimed; when a user joins a reserved slot, the room uses the host-assigned participant name; host can edit participant names and addresses via member list.
+ - Q: How a joining user claims a participant slot → A: On join, if there is a participant slot with the joining user’s EVM address and it is unclaimed, the user claims it; if it is already claimed, show “Participant slot for this address already claimed”; if no matching slot exists, create a new participant slot unless that would exceed 6 participants.
+ - Q: What counts as total_participants and the “>= 3 participants” rule → A: Count all participant slots, including unclaimed reserved slots.
+
  ## User Scenarios & Testing *(mandatory)*
  
  ### User Story 1 - Join a room and participate in consensus polls (Priority: P1)
@@ -58,18 +68,18 @@
  
  ### User Story 4 - Host guides the process and delivers results (Priority: P2)
  
- The host advances (or goes back) between steps, ensuring there is a clear winner before advancing. At the results step, the room shows the final mapping from levels to participants, optionally includes an elected delegate, and can deliver results to an optional results destination app.
+ The host advances (or goes back) between steps, ensuring there is a clear winner before advancing. At the results step, the room shows the final mapping from levels to participants, optionally includes an elected delegate, and provides a “Submit results” button (no-op placeholder in v1) plus a manual export.
  
  **Why this priority**: Host coordination and final results submission completes the “coordinate here, vote/execute there” loop.
  
- **Independent Test**: Can be tested by assigning one participant as host, progressing through steps with unique winners, optionally editing final results, arriving at results, and performing a results delivery attempt (or manual export).
+ **Independent Test**: Can be tested by assigning one participant as host, progressing through steps with unique winners, optionally editing final results, arriving at results, clicking “Submit results”, and using manual export.
  
  **Acceptance Scenarios**:
  
  1. **Given** a poll step has a unique top-voted option, **When** the host advances to the next step, **Then** all participants immediately see the next step.
  2. **Given** a poll step has a tie for top votes, **When** the host attempts to advance, **Then** the system blocks advancement and explains that there is no clear winner.
  3. **Given** the room is at the results step, **When** members are asked “Do you agree with these results?” and a member clicks “Yes”, **Then** that member sees the submit/deliver/export action (if applicable).
- 4. **Given** the room is at the results step and a results destination app is selected, **When** an eligible member triggers delivery, **Then** the system records that delivery was attempted and shows success/failure status (or provides a manual export if automated delivery is unavailable).
+ 4. **Given** the room is at the results step and a results destination app is selected, **When** an eligible member clicks “Submit results”, **Then** the click is accepted but no external delivery occurs and no success/failure status is recorded or displayed; the UI provides a manual, copyable export of the final results.
  
  ---
  
@@ -82,6 +92,7 @@
  - Network interruption during voting: user can retry; only the latest vote counts.
  - A participant changes display name mid-session: name changes apply to future displays but do not alter recorded identity.
  - A results destination app is unavailable during delivery: the app provides a clear error and allows retry without corrupting room state.
+ - A user opens the invite link to a locked room without authenticating: they can view the final state read-only.
  
  ## Requirements *(mandatory)*
  
@@ -89,7 +100,7 @@
  
  #### Identity, Login, and Respect Credits
  
- - **FR-001**: System MUST authenticate all users via a single identity app: https://eden.frapps.xyz/.
+ - **FR-001**: System MUST authenticate users via a single identity app (https://eden.frapps.xyz/) before allowing any live-room participation (joining as participant/observer while live, voting, chat, host actions).
  - **FR-002**: System MUST retrieve a user’s unique identifier (EVM address) and respect score from the identity app after login.
  - **FR-003**: If the identity app does not provide a human-friendly display name, the system MUST prompt the user to enter a display name before participating.
  - **FR-004**: System MUST represent “Respect” as a non-transferable score/opinion attached to an account identity.
@@ -120,16 +131,19 @@
  - **FR-017**: System MUST distinguish between “participants” (can vote/chat while live) and “observers” (read-only).
  - **FR-018**: System MUST support exactly one host role per room at any time.
  - **FR-019**: Host MUST be able to transfer host status to another current participant, but only while the room is live.
- - **FR-020**: While a room is live, users opening the invite link MUST become participants until the participant limit is reached; after that, they MUST become observers.
- - **FR-021**: The system MUST enforce a participant count between 3 and 6 inclusive for each room.
- - **FR-022**: Host MUST NOT be able to proceed forward from a poll step if the room currently has fewer than 3 participants.
+ - **FR-020**: While a room is live, when an authenticated user opens the invite link, the system MUST:
+   - If there exists an unclaimed participant slot with an EVM address equal to the joining user’s EVM address, associate (claim) that slot for the user.
+   - If there exists a claimed participant slot with an EVM address equal to the joining user’s EVM address, deny joining as a participant and display: “Participant slot for this address already claimed”.
+   - Otherwise, create a new participant slot for the user (using the user’s display name) unless doing so would exceed the participant limit; if it would, the user MUST become an observer.
+ - **FR-021**: The system MUST enforce a participant count between 3 and 6 inclusive for each room; this count includes any host-created reserved participants, even if they are unclaimed.
+ - **FR-022**: Host MUST NOT be able to proceed forward from a poll step if the room currently has fewer than 3 participant slots (including unclaimed reserved slots).
  
  #### Steps, Polls, and Eligibility (Fractalgram)
  
  - **FR-023**: System MUST represent a room as a sequence of steps that all participants view in sync.
  - **FR-024**: System MUST create poll steps for electing participants for levels 6 through 2, in order; There can be less steps if there are less than 6 participants.
  - **FR-025**: System MUST NOT create a poll step for the final level; the remaining eligible participant MUST be assigned the last level automatically.
- - **FR-026**: In each level poll, the options MUST be created from the room’s participant list (including connected and disconnected participants) excluding participants already assigned a higher level.
+ - **FR-026**: In each level poll, the options MUST be created from the room’s participant list (including connected and disconnected participants, and including any unclaimed reserved participants) excluding participants already assigned a higher level.
  - **FR-027**: If “Elect delegate” is enabled, system MUST include an additional poll step asking “Who should be elected as a delegate of this group?” with all participants as options.
  - **FR-028**: The final step MUST always be “Results”.
  - **FR-029**: Results MUST be derived from the winners of prior polls (and implicit final level assignment), producing a mapping from levels to participants; if delegate election is enabled, results MUST include the delegate.
@@ -139,7 +153,7 @@
  - **FR-030**: Participants MUST be able to cast a vote in the current poll.
  - **FR-031**: Participants MUST be able to change their vote; only the latest vote per participant per poll counts.
  - **FR-032**: Poll results MUST NOT be shown to a participant until they have voted on that poll.
- - **FR-033**: After voting, poll results MUST show for each option:
+ - **FR-033**: After voting, poll results MUST show for each option (where `total_participants` is the count of participant slots, including unclaimed reserved slots):
    - Visual representation of vote percentage
    - Numeric percentage
    - `votes / total_participants`
@@ -168,7 +182,7 @@
  - **FR-047**: The UI MUST provide a member list view available at all times while viewing a room.
  - **FR-048**: The member list view MUST be hideable, and on mobile it SHOULD default to hidden.
  - **FR-049**: The member list view MUST be divided into a participant list and an observer list.
- - **FR-050**: The participant list MUST show each participant’s display name in a friendly format, and MUST show their EVM address in shortened form.
+ - **FR-050**: The participant list MUST show each participant’s display name in a friendly format; if the participant has an EVM address, it MUST also be shown in shortened form.
  - **FR-051**: The participant list MUST show per-participant status:
    - Connected / disconnected (whether they currently have the room open)
    - Voted / not voted (whether they have voted in the current step)
@@ -176,7 +190,10 @@
    - Kick out participants
    - Make them observers
    - Transfer hosting rights
-   - Add new participants even if they have not joined, either by entering participant details or by selecting from observers
+   - Add new participants even if they have not joined by creating a reserved participant with a host-assigned display name and optional EVM address
+   - Edit a participant’s display name and EVM address
+   - Associate a connected user (from observers or participants) to a reserved participant slot even if the reserved slot has no EVM address
+   - If a reserved participant has an EVM address and a user with that EVM address joins the room while live, the system MUST associate that user with the reserved participant slot and the room UI MUST use the host-assigned participant display name
  - **FR-053**: Observers MUST be shown in the observer list only when they are currently connected to the room.
  - **FR-054**: The UI MUST provide a step status view available at all times while viewing a room.
  - **FR-055**: The step status view MUST be hideable, and on mobile it SHOULD default to hidden.
@@ -202,18 +219,16 @@
  - **FR-068**: Users opening the room link in locked mode MUST be observers and MUST NOT become participants.
  - **FR-069**: Room state MUST be immutable after entering locked mode.
  - **FR-070**: Host MUST be able to lock the room earlier, but only from the results step.
- - **FR-071**: Anyone with the link MUST be able to view a locked room indefinitely.
+ - **FR-071**: Anyone with the link MUST be able to view a locked room indefinitely without authentication (read-only).
  
  #### Results Agreement and Delivery
  
  - **FR-072**: In the results step, the system MUST ask members: “Do you agree with these results?”.
- - **FR-073**: The results step MUST display agreement status as `yes_votes / total_participants` and the corresponding percentage, where `yes_votes` means the number of current participants who clicked “Yes”.
- - **FR-074**: A room member MUST only see the submit/deliver/export action after they personally have clicked “Yes” on the results agreement question.
- - **FR-075**: If a results destination app was selected during room configuration, the results step MUST provide an action to deliver results to that destination.
- - **FR-076**: Delivering results MUST include enough information for the destination to interpret the consensus outcome (room identity, participants’ identities, level mapping, and optional delegate).
- - **FR-077**: The system MUST display delivery outcome (success/failure) to the room member initiating it.
- - **FR-078**: The system MUST prevent results delivery from modifying the room state (delivery is an external side-effect only).
- - **FR-079**: If automated delivery is not available for a selected destination, the system MUST provide a manual export of the final results in a copyable format suitable for submitting elsewhere.
+ - **FR-073**: The results step MUST display agreement status as `yes_votes / total_participants` and the corresponding percentage, where `yes_votes` means the number of current participants who clicked “Yes” and `total_participants` is the count of participant slots (including unclaimed reserved slots).
+ - **FR-074**: An authenticated room member MUST only see the submit/export action after they personally have clicked “Yes” on the results agreement question.
+ - **FR-075**: If a results destination app was selected during room configuration, the results step MUST provide a “Submit results” action; in v1, clicking it MUST perform no external delivery and MUST NOT record or display success/failure status.
+ - **FR-076**: The results step MUST provide a manual export of the final results in a copyable format suitable for submitting elsewhere.
+ - **FR-077**: Clicking “Submit results” MUST NOT modify the room state.
 
  #### Profile
 
@@ -238,7 +253,8 @@
  - **RoomConfig**: The configuration chosen at room creation (prompt, durations, distribution, results destination app, delegate election).
  - **Preset**: A named, build-time predefined `RoomConfig`.
  - **RoomMember**: A user currently present in a room, either as a participant or an observer.
- - **Participant**: An `Account` participating in a room while live.
+ - **ParticipantSlot**: A per-room participant record that always has a display name and may optionally have an EVM address and an associated `Account` (if claimed).
+ - **Participant**: A claimed `ParticipantSlot` (i.e., a participant slot that has an associated `Account`) participating in a room while live.
  - **Observer**: A user viewing a room without participating.
  - **HostRole**: A designation for one participant who controls step progression.
  - **Step**: A stage in the process (level poll, optional delegate poll, results).
