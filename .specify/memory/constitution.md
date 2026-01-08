@@ -1,7 +1,7 @@
 <!--
 Sync Impact Report
-- Version change: none → 1.0.0
-- Modified principles: none (template) → defined 5 core principles
+- Version change: 1.0.0 → 1.1.0
+- Modified principles: I. Focus on Consensus-Building → expanded with consensus-over-code rule
 - Added sections: Engineering Standards; Session Design & Interop
 - Removed sections: none
 - Templates requiring updates:
@@ -22,13 +22,18 @@ Sync Impact Report
 This application exists to facilitate building consensus on what to do. It does not
 determine which session is authoritative within any particular organization. The
 product surface and data model MUST optimize for running effective consensus sessions
-and exporting their results, not adjudicating authority.
+and exporting their results, not adjudicating authority or executing decisions.
+
+- People determine consensus, not code. Code just helps it.
+  - If the code says one thing but the consensus of the people in the room prefers the other,
+    the consensus of the people is right; it is always right.
+  - This enables dealing with edge cases like technical difficulties in an efficient
+    way, and prevents the app from having too much power.
 
 ### II. Benevolent Dictator Within Sessions; Decentralization via Easy Forking
 Each session designates a single facilitator with control over session flow (e.g.,
 advance/rewind steps) but NOT the outcomes themselves. Decentralization is achieved
-by allowing anyone to fork and run alternative sessions at any time. Session state
-MUST be exportable/importable to enable low-friction forking.
+by allowing anyone run alternative sessions at any time.
 
 ### III. Limit Trust in the Backend
 Prefer client-side processing for computations and decision logic. The backend SHOULD
@@ -62,10 +67,9 @@ breaking changes MUST include versioned artifacts and clear migration paths.
   2s on a typical device/network; avoid main-thread long tasks (>50ms). Measure,
   budget, and regress only with justification.
 
-
 ## Governance
 
 TODO(GOVERNANCE_RULES): Governance intentionally deferred per request. Define
 amendment procedure, semantic versioning policy, and compliance review later.
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2026-01-07
+**Version**: 1.1.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2026-01-08
