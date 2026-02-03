@@ -1,0 +1,3 @@
+[submodule "concepts"]
+	path = concepts
+	url = git@github.com:sim31/frapp-concepts.git
