@@ -1,71 +1,50 @@
-<!--
-Sync Impact Report
-- Version change: none → 1.0.0
-- Modified principles: none (template) → defined 5 core principles
-- Added sections: Engineering Standards; Session Design & Interop
-- Removed sections: none
-- Templates requiring updates:
-  - .specify/templates/plan-template.md (⚠ pending): Add Constitution Check gates per principles
-  - .specify/templates/spec-template.md (✅ aligned): No mandatory changes detected
-  - .specify/templates/tasks-template.md (⚠ pending): Align testing guidance with Engineering Standards
-  - .specify/templates/commands/ (⚠ pending): Verify command docs reference constitution generically
-- Follow-up TODOs:
-  - TODO(RATIFICATION_DATE): Set original adoption date
-  - TODO(GOVERNANCE_RULES): Define amendment/versioning/compliance procedures
--->
-
-# fractalgram2 Constitution
+# [PROJECT_NAME] Constitution
+<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
 
 ## Core Principles
 
-### I. Focus on Consensus-Building
-This application exists to facilitate building consensus on what to do. It does not
-determine which session is authoritative within any particular organization. The
-product surface and data model MUST optimize for running effective consensus sessions
-and exporting their results, not adjudicating authority.
+### [PRINCIPLE_1_NAME]
+<!-- Example: I. Library-First -->
+[PRINCIPLE_1_DESCRIPTION]
+<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
 
-### II. Benevolent Dictator Within Sessions; Decentralization via Easy Forking
-Each session designates a single facilitator with control over session flow (e.g.,
-advance/rewind steps) but NOT the outcomes themselves. Decentralization is achieved
-by allowing anyone to fork and run alternative sessions at any time. Session state
-MUST be exportable/importable to enable low-friction forking.
+### [PRINCIPLE_2_NAME]
+<!-- Example: II. CLI Interface -->
+[PRINCIPLE_2_DESCRIPTION]
+<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
 
-### III. Limit Trust in the Backend
-Prefer client-side processing for computations and decision logic. The backend SHOULD
-primarily store and relay data. Sensitive or verifiable computations SHOULD be
-performed client-side where feasible. Protocols MUST be designed to minimize reliance
-on privileged backend correctness beyond storage and transport.
+### [PRINCIPLE_3_NAME]
+<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
+[PRINCIPLE_3_DESCRIPTION]
+<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
 
-### IV. Do One Thing, Do It Well
-Each feature MUST have a single, clear purpose, with simple, composable boundaries.
-Avoid unnecessary abstraction and configuration. Prefer small, cohesive modules over
-broad frameworks. Remove or split features when they exceed a single responsibility.
+### [PRINCIPLE_4_NAME]
+<!-- Example: IV. Integration Testing -->
+[PRINCIPLE_4_DESCRIPTION]
+<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
 
-### V. Assume Interoperability: Results Are Needed by Other Apps
-Session outputs MUST be designed for consumption by other systems. Provide stable,
-well-documented schemas and export formats. Backward-compatible changes are preferred;
-breaking changes MUST include versioned artifacts and clear migration paths.
+### [PRINCIPLE_5_NAME]
+<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
+[PRINCIPLE_5_DESCRIPTION]
+<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
 
-## Engineering Standards
+## [SECTION_2_NAME]
+<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
 
-- **Code Quality**: Enforce linting, formatting, and static analysis. Code MUST be
-  readable and maintainable, with clear ownership and small, cohesive modules.
-- **Testing Standards**: Critical user journeys and core logic MUST have automated
-  tests. Where practical, write tests before or alongside code. Each user story MUST
-  be independently testable. Contract/interface changes MUST include corresponding
-  tests.
-- **User Experience Consistency**: Apply a consistent design system (components,
-  spacing, typography). Accessibility and responsiveness are REQUIRED. Flows MUST be
-  predictable and discoverable.
-- **Performance (Smooth UX)**: Aim for perceptually smooth interactions. Targets:
-  p95 interaction latency < 100ms for UI updates; initial meaningful paint within
-  2s on a typical device/network; avoid main-thread long tasks (>50ms). Measure,
-  budget, and regress only with justification.
+[SECTION_2_CONTENT]
+<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
 
+## [SECTION_3_NAME]
+<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+
+[SECTION_3_CONTENT]
+<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
 
 ## Governance
+<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-TODO(GOVERNANCE_RULES): Governance intentionally deferred per request. Define
-amendment procedure, semantic versioning policy, and compliance review later.
+[GOVERNANCE_RULES]
+<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
 
-**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2026-01-07
+**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
+<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
