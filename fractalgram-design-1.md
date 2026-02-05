@@ -1,4 +1,4 @@
-# Fractalgram Design Principles. Part I
+# Fractalgram Design Principles. Part I.
 
 [Respect Game](concepts/respect-game.md) seems to be the core component of fractal organizations as we know them. The fractally whitepaper[^1] which inspired most of the ecosystem included many other features you would want in a DAO, and we have considered many more since, but Respect Game remains the one constant across time and different fractals that distinguishes them from other DAO initiatives. This highlights the importance of the app or tool we use for playing Respect Game.
 
