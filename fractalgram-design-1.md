@@ -32,13 +32,13 @@ Not everything has an objective metric to measure it by. And even when there are
 
 ### Listening
 
-<!-- TODO: explain why listening is good (it's something often lacking in organizations). Only later explain the mechanism how listening is not only enabled but also incentivized in respect game. -->
-Everyone gets the chance to speak—to present their contributions—and people have to listen. Why? Because they will need to reach consensus. If you have not paid attention to what others presented, you cannot meaningfully participate in the consensus-building process.
+Listening is something often lacking in organizations. Meetings become spaces where people wait for their turn to speak rather than genuinely engaging with others' ideas. When people do not feel heard, they disengage—and valuable perspectives are lost.
+
+Respect Game not only enables listening but incentivizes it. Everyone gets the chance to speak—to present their contributions—and people have to listen. Why? Because they will need to reach consensus. If you have not paid attention to what others presented, you cannot meaningfully participate in the consensus-building process.
 
 ### Accuracy and Fairness Through Dialectic
 
-<!-- TODO: the last sentence of this paragraph is weird -->
-Imagine one of the participants sees something important about a contribution that others miss. If there is no discussion, this information is not shared and the result will not take that data point into account. But if people discuss their rationale for their positions, you get the actual benefit of 3–5 people reviewing a single contribution—awareness of different pieces of information and different perspectives.
+Imagine one of the participants sees something important about a contribution that others miss. If there is no discussion, this information is not shared and the result will not take that data point into account. But if people discuss their rationale for their positions, you get the actual benefit of 3–5 people reviewing a single contribution—each bringing awareness to different pieces of information and different perspectives.
 
 Furthermore, if this sharing of perspectives leads to actual discussion, where people move from disagreement to mutual agreement, there is a strong chance that the accuracy and fairness of the result will improve. This is the dialectic principle [^9]: by presenting and considering different viewpoints, we can arrive at a conclusion that is superior to any single perspective.
 
